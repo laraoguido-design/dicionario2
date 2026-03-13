@@ -1,8 +1,18 @@
-<?php 
+<?php
+
 session_start();
-require_once '../config/database.php';
+require_once '../database/config.php';
 
 header('Content-Type: application/json');
+
+$dadosBrutos = file_get_contents("php://input");
+$data = json_decode($dadosBrutos);
+
+if (!$data || !isset($data->nome) || !isset($data->senha)) {
+    echo json_encode(["success" => false, "message" => "Dados inválidos."]);
+    exit;
+}
+
 $nome = $conn->real_escape_string(trim($data->nome));
 $senha = trim($data->senha);
 
@@ -35,5 +45,3 @@ if ($result && $result->num_rows === 1) {
     echo json_encode(["success" => false, "message" => "Usuário não encontrado."]);
     exit;
 }
-
-?>
